@@ -42,7 +42,6 @@
             </button>
         </div>
 
-        <!-- тело приложение -->
         <div class="p-8 bg-white min-h-[400px]">
 
             <div id="tab-content-file" class="fade-in">
@@ -182,13 +181,19 @@
                     </div>
                 </div>
 
+                <div id="imageContainer" class="hidden mt-6 border border-indigo-100 rounded-2xl overflow-hidden shadow-sm">
+                    <p class="bg-indigo-50 p-3 text-xs font-bold text-indigo-600 uppercase tracking-wider text-center">
+                        📷 Фотоперевод
+                    </p>
+                    <img id="processedImage" src="" alt="Translated Image" class="w-full h-auto object-contain">
+                </div>
+
             </div>
 
         </div>
     </div>
 
     <script>
-        // --- ВАЖНО: КОНСТАНТА С ВАШИМ URL NGROK ---
         const API_BASE_URL = "https://2d52ceb43df2.ngrok-free.app";
 
         function switchTab(tabName) {
@@ -251,7 +256,6 @@
             const voice = document.getElementById('fileTtsVoice').value;
             if(voice) formData.append("tts_voice", voice);
 
-            // ИСПОЛЬЗУЕМ КОНСТАНТУ + ПУТЬ
             sendRequest(`${API_BASE_URL}/api/process`, formData, document.getElementById('sendFileBtn'));
         });
 
@@ -266,7 +270,6 @@
             const voice = document.getElementById('textTtsVoice').value;
             if(voice) formData.append("tts_voice", voice);
 
-            // ИСПОЛЬЗУЕМ КОНСТАНТУ + ПУТЬ
             sendRequest(`${API_BASE_URL}/api/text-process`, formData, document.getElementById('sendTextBtn'));
         });
 
@@ -278,7 +281,6 @@
             btnElement.classList.add('opacity-75', 'cursor-not-allowed');
 
             try {
-                // Добавили заголовки для обхода предупреждения ngrok (опционально, но полезно)
                 const response = await fetch(url, {
                     method: "POST",
                     body: formData,
@@ -294,7 +296,7 @@
                     resultsBlock.classList.remove('hidden');
 
                     setTimeout(() => resultsBlock.scrollIntoView({behavior: "smooth", block: "start"}), 100);
-
+                    
                     let outputText = "";
                     if (json.data.text_result) {
                         outputText = json.data.text_result;
@@ -306,19 +308,24 @@
                             });
                         }
                     }
-
                     document.getElementById('resultText').innerText = outputText || "Результат получен, но текст пуст.";
 
                     const audioContainer = document.getElementById('audioContainer');
                     if (json.data.audio_url || json.data.tts_audio_url) {
                         audioContainer.classList.remove('hidden');
                         const player = document.getElementById('audioPlayer');
-
                         player.src = json.data.audio_url || json.data.tts_audio_url;
                         player.load();
-                        player.play().catch(e => console.log("Автоплей заблокирован браузером"));
                     } else {
                         audioContainer.classList.add('hidden');
+                    }
+
+                    const imgContainer = document.getElementById('imageContainer');
+                    if (json.data.processed_image_url) {
+                        imgContainer.classList.remove('hidden');
+                        document.getElementById('processedImage').src = json.data.processed_image_url;
+                    } else {
+                        imgContainer.classList.add('hidden');
                     }
 
                 } else {
