@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Studio - Media & Text</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex items-center justify-center p-4 font-sans">
+
+    <div class="max-w-3xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden ring-1 ring-slate-900/5">
+
+        <div class="bg-gradient-to-r from-indigo-600 to-violet-600 p-8 text-center text-white relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+            <h1 class="text-3xl font-extrabold tracking-tight relative z-10">
+                <i class="fa-solid fa-wand-magic-sparkles mr-2 text-yellow-300"></i>AI Studio
+            </h1>
+            <p class="text-indigo-100 mt-2 font-medium relative z-10 opacity-90">
+                Универсальная обработка медиа и текста
+            </p>
+        </div>
+
+        <div class="flex border-b border-gray-200">
+            <button onclick="switchTab('file')" id="tab-btn-file" class="w-1/2 py-4 text-center font-semibold text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/50 transition-all hover:bg-indigo-50">
+                <i class="fa-solid fa-cloud-arrow-up mr-2"></i>Файл
+            </button>
+            <button onclick="switchTab('text')" id="tab-btn-text" class="w-1/2 py-4 text-center font-semibold text-gray-500 hover:text-indigo-500 transition-all hover:bg-gray-50">
+                <i class="fa-solid fa-keyboard mr-2"></i>Текст
+            </button>
+        </div>
+
+        <!-- тело приложение -->
+        <div class="p-8 bg-white min-h-[400px]">
+
+            <div id="tab-content-file" class="fade-in">
+                <div class="space-y-6">
+
+                    <div class="relative group">
+                        <label class="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer bg-gray-50 hover:bg-indigo-50 hover:border-indigo-400 transition-all duration-300">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6 text-gray-500 group-hover:text-indigo-500 transition-colors">
+                                <i class="fa-solid fa-cloud-arrow-up text-4xl mb-3 transition-transform group-hover:-translate-y-1"></i>
+                                <p class="text-sm font-medium" id="fileNameDisplay">
+                                    <span class="font-bold">Нажмите</span> или перетащите файл
+                                </p>
+                                <p class="text-xs text-gray-400 mt-1">Видео, Аудио или Фото</p>
+                            </div>
+                            <input type="file" id="fileInput" class="hidden" />
+                        </label>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Тип файла</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-layer-group absolute left-3 top-3 text-gray-400"></i>
+                                <select id="fileTaskType" class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none">
+                                    <option value="image">📸 Картинка</option>
+                                    <option value="audio">🎤 Аудио</option>
+                                    <option value="video">🎥 Видео</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Язык оригинала</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-language absolute left-3 top-3 text-gray-400"></i>
+                                <select id="fileSourceLang" class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none">
+                                    <option value="ru">🇷🇺 Русский</option>
+                                    <option value="en">🇺🇸 English</option>
+                                    <option value="kz">🇰🇿 Казахский</option>
+                                    <option value="zh">🇨🇳 Китайский</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Озвучка результата</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-microphone-lines absolute left-3 top-3 text-gray-400"></i>
+                                <select id="fileTtsVoice" class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none">
+                                    <option value="">🔇 Без озвучки</option>
+                                    <option value="ru-RU-DmitryNeural">🇷🇺 Дмитрий (Муж)</option>
+                                    <option value="ru-RU-SvetlanaNeural">🇷🇺 Светлана (Жен)</option>
+                                    <option value="kk-KZ-DauletNeural">🇰🇿 Даулет (Муж)</option>
+                                    <option value="kk-KZ-AigulNeural">🇰🇿 Айгүль (Жен)</option>
+                                    <option value="en-US-GuyNeural">🇺🇸 Guy (Муж)</option>
+                                    <option value="en-US-JennyNeural">🇺🇸 Jenny (Жен)</option>
+                                    <option value="zh-CN-YunyangNeural">🇨🇳 Yunyang (Муж)</option>
+                                    <option value="zh-CN-XiaoxiaoNeural">🇨🇳 Xiaoxiao (Жен)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="sendFileBtn" class="w-full text-white bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 font-bold rounded-xl py-3.5 text-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 active:scale-[0.98]">
+                        🚀 Начать обработку
+                    </button>
+                </div>
+            </div>
+
+            <div id="tab-content-text" class="hidden fade-in">
+                <div class="space-y-6">
+                    <div class="relative">
+                        <label class="block text-sm font-medium text-gray-700 mb-2 ml-1">Введите или вставьте текст:</label>
+                        <textarea id="textInput" rows="6" class="w-full p-4 bg-gray-50 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none resize-none transition-colors text-gray-700 text-lg leading-relaxed" placeholder="Напишите здесь что-нибудь..."></textarea>
+                        <div class="absolute bottom-3 right-3 text-gray-400 text-xs">AI Text</div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Перевести на</label>
+                            <select id="textTargetLang" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-indigo-500 outline-none">
+                                <option value="no_translate">🚫 Не переводить</option>
+                                <option value="ru">🇷🇺 Русский</option>
+                                <option value="kk">🇰🇿 Казахский</option>
+                                <option value="en">🇺🇸 English</option>
+                                <option value="zh">🇨🇳 Китайский</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Голос озвучки</label>
+                            <select id="textTtsVoice" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-indigo-500 outline-none">
+                                <option value="">🔇 Только текст</option>
+                                <option value="ru-RU-SvetlanaNeural">🇷🇺 Светлана</option>
+                                <option value="kk-KZ-AigulNeural">🇰🇿 Айгуль</option>
+                                <option value="en-US-JennyNeural">🇺🇸 Jenny</option>
+                                <option value="zh-CN-XiaoxiaoNeural">🇨🇳 Xiaoxiao</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button id="sendTextBtn" class="w-full text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 font-bold rounded-xl py-3.5 text-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 active:scale-[0.98]">
+                        🗣️ Перевести и Озвучить
+                    </button>
+                </div>
+            </div>
+
+            <div id="resultsBlock" class="mt-10 hidden border-t border-gray-100 pt-8 fade-in">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                        <span class="bg-indigo-100 text-indigo-600 w-10 h-10 rounded-xl flex items-center justify-center mr-3 shadow-sm">
+                            <i class="fa-solid fa-sparkles"></i>
+                        </span>
+                        Результат
+                    </h2>
+
+                    <button onclick="copyToClipboard()" class="group flex items-center space-x-2 px-4 py-2 bg-gray-50 hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 rounded-lg transition-colors text-sm font-medium">
+                        <i class="fa-regular fa-copy"></i>
+                        <span id="copyBtnText">Копировать</span>
+                    </button>
+                </div>
+
+                <div class="relative bg-white rounded-2xl border border-indigo-100 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                    <div class="h-1 w-full bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500"></div>
+                    <div class="p-6 md:p-8 max-h-[400px] overflow-y-auto custom-scrollbar">
+                        <p id="resultText" class="text-lg text-slate-700 leading-relaxed whitespace-pre-wrap"></p>
+                    </div>
+                </div>
+
+                <div id="audioContainer" class="hidden mt-6 bg-gradient-to-r from-indigo-50 to-white border border-indigo-100 p-4 rounded-2xl flex items-center shadow-sm">
+                    <div class="flex-shrink-0 bg-white p-3 rounded-full text-indigo-600 shadow-sm border border-indigo-50 mr-4">
+                        <i class="fa-solid fa-volume-high text-xl"></i>
+                    </div>
+                    <div class="w-full">
+                        <p class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">Аудио версия</p>
+                        <audio id="audioPlayer" controls class="w-full h-8 opacity-90 hover:opacity-100 transition-opacity"></audio>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- ВАЖНО: КОНСТАНТА С ВАШИМ URL NGROK ---
+        const API_BASE_URL = "https://2d52ceb43df2.ngrok-free.app";
+
+        function switchTab(tabName) {
+            document.getElementById('tab-content-file').classList.add('hidden');
+            document.getElementById('tab-content-text').classList.add('hidden');
+            document.getElementById(tabName === 'file' ? 'tab-content-file' : 'tab-content-text').classList.remove('hidden');
+
+            const btnFile = document.getElementById('tab-btn-file');
+            const btnText = document.getElementById('tab-btn-text');
+            const inactiveClass = "w-1/2 py-4 text-center font-semibold text-gray-500 hover:text-indigo-500 transition-all hover:bg-gray-50 border-b-2 border-transparent";
+            const activeClass = "w-1/2 py-4 text-center font-semibold text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/50 transition-all";
+
+            if (tabName === 'file') {
+                btnFile.className = activeClass;
+                btnText.className = inactiveClass;
+            } else {
+                btnFile.className = inactiveClass;
+                btnText.className = activeClass;
+            }
+
+            document.getElementById('resultsBlock').classList.add('hidden');
+        }
+
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                fileNameDisplay.innerHTML = `<span class="text-indigo-600 font-bold"><i class="fa-solid fa-check mr-1"></i>${this.files[0].name}</span>`;
+            }
+        });
+
+        function copyToClipboard() {
+            const text = document.getElementById('resultText').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btnText = document.getElementById('copyBtnText');
+                const icon = btnText.parentElement.querySelector('i');
+
+                const originalText = btnText.innerText;
+                btnText.innerText = "Скопировано!";
+                btnText.parentElement.classList.add("text-green-600", "bg-green-50");
+                icon.className = "fa-solid fa-check";
+
+                setTimeout(() => {
+                    btnText.innerText = originalText;
+                    btnText.parentElement.classList.remove("text-green-600", "bg-green-50");
+                    icon.className = "fa-regular fa-copy";
+                }, 2000);
+            });
+        }
+
+        document.getElementById('sendFileBtn').addEventListener('click', () => {
+            if (!fileInput.files[0]) return alert("Пожалуйста, выберите файл!");
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            formData.append("task_type", document.getElementById('fileTaskType').value);
+            formData.append("source_lang", document.getElementById('fileSourceLang').value);
+
+            const voice = document.getElementById('fileTtsVoice').value;
+            if(voice) formData.append("tts_voice", voice);
+
+            // ИСПОЛЬЗУЕМ КОНСТАНТУ + ПУТЬ
+            sendRequest(`${API_BASE_URL}/api/process`, formData, document.getElementById('sendFileBtn'));
+        });
+
+        document.getElementById('sendTextBtn').addEventListener('click', () => {
+            const text = document.getElementById('textInput').value;
+            if (!text.trim()) return alert("Введите текст!");
+
+            const formData = new FormData();
+            formData.append("text", text);
+            formData.append("target_lang", document.getElementById('textTargetLang').value);
+
+            const voice = document.getElementById('textTtsVoice').value;
+            if(voice) formData.append("tts_voice", voice);
+
+            // ИСПОЛЬЗУЕМ КОНСТАНТУ + ПУТЬ
+            sendRequest(`${API_BASE_URL}/api/text-process`, formData, document.getElementById('sendTextBtn'));
+        });
+
+        async function sendRequest(url, formData, btnElement) {
+            const originalContent = btnElement.innerHTML;
+
+            btnElement.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i>ИИ Думает...`;
+            btnElement.disabled = true;
+            btnElement.classList.add('opacity-75', 'cursor-not-allowed');
+
+            try {
+                // Добавили заголовки для обхода предупреждения ngrok (опционально, но полезно)
+                const response = await fetch(url, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "ngrok-skip-browser-warning": "true"
+                    }
+                });
+
+                const json = await response.json();
+
+                if (json.status === "success") {
+                    const resultsBlock = document.getElementById('resultsBlock');
+                    resultsBlock.classList.remove('hidden');
+
+                    setTimeout(() => resultsBlock.scrollIntoView({behavior: "smooth", block: "start"}), 100);
+
+                    let outputText = "";
+                    if (json.data.text_result) {
+                        outputText = json.data.text_result;
+                    } else if (json.data.original_text) {
+                        outputText = "Оригинал:\n" + json.data.original_text + "\n\n";
+                        if (json.data.translations) {
+                            Object.keys(json.data.translations).forEach(lang => {
+                                outputText += `Перевод (${lang}):\n${json.data.translations[lang]}\n\n`;
+                            });
+                        }
+                    }
+
+                    document.getElementById('resultText').innerText = outputText || "Результат получен, но текст пуст.";
+
+                    const audioContainer = document.getElementById('audioContainer');
+                    if (json.data.audio_url || json.data.tts_audio_url) {
+                        audioContainer.classList.remove('hidden');
+                        const player = document.getElementById('audioPlayer');
+
+                        player.src = json.data.audio_url || json.data.tts_audio_url;
+                        player.load();
+                        player.play().catch(e => console.log("Автоплей заблокирован браузером"));
+                    } else {
+                        audioContainer.classList.add('hidden');
+                    }
+
+                } else {
+                    alert("Ошибка сервера: " + json.message);
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Не удалось подключиться к серверу ngrok. Проверьте ссылку.");
+            } finally {
+                btnElement.innerHTML = originalContent;
+                btnElement.disabled = false;
+                btnElement.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        }
+    </script>
+</body>
+</html>
