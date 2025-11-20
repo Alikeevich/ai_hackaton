@@ -135,10 +135,14 @@
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Голос озвучки</label>
                             <select id="textTtsVoice" class="w-full p-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-indigo-500 outline-none">
                                 <option value="">🔇 Только текст</option>
-                                <option value="ru-RU-SvetlanaNeural">🇷🇺 Светлана</option>
-                                <option value="kk-KZ-AigulNeural">🇰🇿 Айгуль</option>
-                                <option value="en-US-JennyNeural">🇺🇸 Jenny</option>
-                                <option value="zh-CN-XiaoxiaoNeural">🇨🇳 Xiaoxiao</option>
+                                    <option value="ru-RU-DmitryNeural">🇷🇺 Дмитрий (Муж)</option>
+                                    <option value="ru-RU-SvetlanaNeural">🇷🇺 Светлана (Жен)</option>
+                                    <option value="kk-KZ-DauletNeural">🇰🇿 Даулет (Муж)</option>
+                                    <option value="kk-KZ-AigulNeural">🇰🇿 Айгүль (Жен)</option>
+                                    <option value="en-US-GuyNeural">🇺🇸 Guy (Муж)</option>
+                                    <option value="en-US-JennyNeural">🇺🇸 Jenny (Жен)</option>
+                                    <option value="zh-CN-YunyangNeural">🇨🇳 Yunyang (Муж)</option>
+                                    <option value="zh-CN-XiaoxiaoNeural">🇨🇳 Xiaoxiao (Жен)</option>
                             </select>
                         </div>
                     </div>
@@ -194,7 +198,7 @@
     </div>
 
     <script>
-        const API_BASE_URL = "https://2d52ceb43df2.ngrok-free.app";
+        const API_BASE_URL = "https://9c61f2aec220.ngrok-free.app ";
 
         function switchTab(tabName) {
             document.getElementById('tab-content-file').classList.add('hidden');
